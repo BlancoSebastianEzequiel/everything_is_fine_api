@@ -1,7 +1,9 @@
 require 'sinatra'
 require 'sinatra/json'
-require_relative 'sinatra_ssl'
 require 'json'
+
+require_relative 'sinatra_ssl'
+require_relative 'sinatra_auth'
 
 set :bind, '0.0.0.0'
 set :ssl_certificate, 'localhost.crt'
@@ -15,11 +17,22 @@ get '/frank-says' do
 end
 
 post '/event_flow_test' do
-	body = JSON.parse(request.body.read)
+	begin
+		protect! username: 'everything', password: 'is_fine'
 
-	open("#{FILE_BASE}/event_flow_test", 'a') do |file|
-		file.puts(body.to_json)
-		file.puts("\n")
+		body = JSON.parse(request.body.read)
+
+		open("#{FILE_BASE}/event_flow_test", 'a') do |file|
+			file.puts(body.to_json)
+			file.puts("\n")
+		end
+		json(status: 'received', detail: 'all green')
+	rescue => e
+		open("#{FILE_BASE}/unexpected_errors", 'a') do |file|
+			file.puts(e)
+			file.puts(e.backtrace)
+			file.puts("\n\n\n\n\n\n\n")
+		end
+		json(status: 'todo mal ameo', detail: 'en algun lado la cagaste')
 	end
-	json(status: 'received', detail: 'all green')
 end
