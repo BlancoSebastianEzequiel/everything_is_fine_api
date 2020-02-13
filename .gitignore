@@ -56,3 +56,4 @@ build-iPhoneSimulator/
 # .rubocop-https?--*
 
 event_flow_test
+src/localhost*
