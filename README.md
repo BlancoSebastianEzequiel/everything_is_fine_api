@@ -1,6 +1,10 @@
 # everything_is_fine_api
 An API with Sinatra where everything is fine
 
+## Run with
+
+`ruby src/api.rb`
+
 ## To enable SSL
 Using this command on /src: 
 ```
